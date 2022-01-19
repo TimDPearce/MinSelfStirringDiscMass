@@ -16,7 +16,9 @@ to fragment that particle, vFrag(SKm).
 
 To use the program, first download and unpack the ZIP file (the green 
 'Code' button on GitHub, then 'Download ZIP', then unzip the file on your 
-computer). The simply run MinSelfStirringDiscMass.py. To change the 
+computer). The simply run MinSelfStirringDiscMass.py.
+
+The default parameters supplied are for HD 38206. To change the 
 parameters, change the values in the 'User Inputs' section of 
 MinSelfStirringDiscMass.py (you should not have to change anything 
 outside of that section).
