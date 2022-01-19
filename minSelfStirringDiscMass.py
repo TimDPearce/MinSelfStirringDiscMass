@@ -22,6 +22,7 @@ then please cite Pearce et al. 2022. Finally, let me know if you find any
 bugs or have any requests!'''
 
 ############################### Libraries ###############################
+import sys
 import numpy as np
 import math
 from scipy.optimize import minimize
@@ -187,9 +188,11 @@ def GetDiscParsAndErrorsForMinDiscMassToSelfStir_mEarthAndKm(mDust_mEarth, mDust
 	# Get the uncertainties on all parameters
 	uncertaintiesOnDiscParsForMinDiscMassToSelfStir = GetUncertaintiesOnDiscParsForMinDiscMassToSelfStir(discParsForMinDiscMassToSelfStir, mDust_mEarth, mDustError_mEarth, age_Myr, age1SigUp_Myr, age1SigDown_Myr, mStar_mSun, mStar1SigUp_mSun, mStar1SigDown_mSun, discInnerEdge_au, discInnerEdge1SigUp_au, discInnerEdge1SigDown_au, discOuterEdge_au, discOuterEdge1SigUp_au, discOuterEdge1SigDown_au, sMm_mm, mDisc1km_mEarth, debug=debug)
 	
-	# Combine the value and uncertainty dictionaries
-	discParsAndErrorsForMinDiscMassToSelfStir = {**discParsForMinDiscMassToSelfStir, **uncertaintiesOnDiscParsForMinDiscMassToSelfStir}
-
+	# Combine the value and uncertainty dictionaries (valid for various 
+	# Python versions)
+	discParsAndErrorsForMinDiscMassToSelfStir = discParsForMinDiscMassToSelfStir.copy()
+	discParsAndErrorsForMinDiscMassToSelfStir.update(uncertaintiesOnDiscParsForMinDiscMassToSelfStir)
+		
 	# Error check
 	if sKmToStir_km > minSMaxToStirDisc_km:
 		print('### WARNING: sKm_km (%s) > sMax_km (%S)!' % (sKmToStir_km, minSMaxToStirDisc_km))
@@ -543,14 +546,14 @@ def GetUncertaintiesOnDiscParsForMinDiscMassToSelfStir(discParsForMinDiscMassToS
 		print('C: %s' % C)
 		print('D: %s' % D)
 		print('freqDenominator: %s' % freqDenominator)
-		print()
+		PrintEmptyLine()
 		print('Differentials:')
 		print('WRT SMax:', differentialSMaxWRTVariables_kmPerUnit)
 		print('WRT MDisc1km:', differentialMDisc1kmWRTVariables_mEarthPerUnit)
 		print('WRT SKm:', differentialSKmWRTVariables_kmPerUnit)
 		print('WRT VFrag:', differentialVFragWRTVariables_kmPerSPerUnit)
 		print('WRT MDiscToStir:', differentialMDiscToStirWRTVariables_mEarthPerUnit)
-		print()
+		PrintEmptyLine()
 		print('Uncertainties:')					
 		print(uncertaintiesOnDiscParsForMinDiscMassToSelfStir)
 		
@@ -590,7 +593,7 @@ def CheckUserInputsOK():
 		print('***ERROR*** Problem(s) with user inputs:')
 		for reasonUnputsAreBad in reasonsUnputsAreBad:
 			print('     -%s' % reasonUnputsAreBad)
-		print()	
+		PrintEmptyLine()	
 					
 	return areUserInputsOK
 	
@@ -604,7 +607,15 @@ def PrintUserInputs():
 	print('     Disc inner edge apo: %s au' % GetValueAndUncertaintyString(discInnerEdgeApo_au, discInnerEdgeApo1SigUp_au, discInnerEdgeApo1SigDown_au))
 	print('     Disc outer edge peri: %s au' % GetValueAndUncertaintyString(discOuterEdgePeri_au, discOuterEdgePeri1SigUp_au, discOuterEdgePeri1SigDown_au))
 	print('     Millimeter dust mass: %s MEarth' % GetValueAndUncertaintyString(mDust_mEarth, mDustError_mEarth, mDustError_mEarth))
-	print()
+	PrintEmptyLine()
+
+#------------------------------------------------------------------------
+def PrintEmptyLine():
+	'''Print an empty line (done this way to enable compatibility across 
+	Python versions)'''
+	
+	if sys.version_info[0] < 3: print
+	else: print()
 
 #------------------------------------------------------------------------
 def PrintProgramOutputs(discParsAndErrorsForMinDiscMassToSelfStir):
@@ -630,7 +641,7 @@ def PrintProgramOutputs(discParsAndErrorsForMinDiscMassToSelfStir):
 	print('     Largest colliding particle (SKm) in min.-mass disc: %s m' % GetValueAndUncertaintyString(sKmToStir_m, sKmToStir1SigUp_m, sKmToStir1SigDown_m))
 	print('     Fragmentation speed of largest colliding particle in min.-mass disc: %s m/s' %GetValueAndUncertaintyString(vFragSkm_mPerS, vFragSkm1SigUp_mPerS, vFragSkm1SigDown_mPerS))
 	
-	print()
+	PrintEmptyLine()
 	
 #------------------------------------------------------------------------
 def GetValueAndUncertaintyString(value, err1SigUp, err1SigDown):
@@ -740,7 +751,7 @@ def GetValueAndUncertaintyString(value, err1SigUp, err1SigDown):
 	return valueAndUncertaintyString
 	
 ################################ Program ################################
-print()
+PrintEmptyLine()
 
 # Print the user inputs
 PrintUserInputs()
